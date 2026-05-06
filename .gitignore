@@ -98,6 +98,8 @@ Desktop.ini
 # Project Specific
 # =========================
 
-# Keep reference-images folder but ignore contents (user adds their own)
-# Uncomment if you want to ignore uploaded images:
-# backend/reference-images/uploads/
+# Reference images (user adds their own)
+backend/reference-images/*
+!backend/reference-images/.gitkeep
+backend/reference-images/uploads/*
+!backend/reference-images/uploads/.gitkeep
