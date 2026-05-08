@@ -2,15 +2,17 @@ import { ref, computed } from 'vue'
 import { useApi, type Image, type SessionPreset } from './useApi'
 import { useTimer } from './useTimer'
 
-export function useSession() {
-  const api = useApi()
-  const timer = useTimer()
+// Shared state (singleton) - lives outside the function
+const api = useApi()
+const timer = useTimer()
 
-  const images = ref<Image[]>([])
-  const currentIndex = ref(0)
-  const durationSeconds = ref(0)
-  const isSessionActive = ref(false)
-  const isSessionComplete = ref(false)
+const images = ref<Image[]>([])
+const currentIndex = ref(0)
+const durationSeconds = ref(0)
+const isSessionActive = ref(false)
+const isSessionComplete = ref(false)
+
+export function useSession() {
 
   // Current image being displayed
   const currentImage = computed(() => {
@@ -92,6 +94,7 @@ export function useSession() {
     isSessionComplete,
     
     // Timer passthrough
+    remainingSeconds: timer.remainingSeconds,
     displayTime: timer.displayTime,
     progress: timer.progress,
     isRunning: timer.isRunning,
