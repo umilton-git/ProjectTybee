@@ -12,6 +12,8 @@ const presets = ref<SessionPreset[]>([])
 const selectedPreset = ref<SessionPreset | null>(null)
 const loading = ref(true)
 const error = ref('')
+const fileInput = ref<HTMLInputElement | null>(null)
+const uploading = ref(false)
 
 // Fetch presets when component mounts
 onMounted(async () => {
@@ -40,10 +42,44 @@ function formatDuration(seconds: number): string {
   if (seconds < 60) return `${seconds}s`
   return `${seconds / 60} min`
 }
+
+// Upload functions
+function triggerUpload() {
+  fileInput.value?.click()
+}
+
+async function handleFileUpload(event: Event) {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (!file) return
+
+  uploading.value = true
+  try {
+    await api.uploadImage(file)
+    alert('Image uploaded successfully!')
+  } catch (e) {
+    alert('Failed to upload image')
+  } finally {
+    uploading.value = false
+    target.value = '' // Reset input
+  }
+}
 </script>
 
 <template>
   <div class="setup">
+    <!-- Upload Button -->
+    <button class="upload-btn" @click="triggerUpload">
+      Upload
+    </button>
+    <input
+      ref="fileInput"
+      type="file"
+      accept="image/*"
+      style="display: none"
+      @change="handleFileUpload"
+    />
+
     <h1>Tybee</h1>
     <p>Gesture Drawing Practice</p>
 
@@ -79,10 +115,28 @@ function formatDuration(seconds: number): string {
 
 <style scoped>
 .setup {
+  position: relative;
   text-align: center;
   padding: 2rem;
   max-width: 600px;
   margin: 0 auto;
+}
+
+.upload-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem 1rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.upload-btn:hover {
+  background: #0056b3;
 }
 
 .presets {

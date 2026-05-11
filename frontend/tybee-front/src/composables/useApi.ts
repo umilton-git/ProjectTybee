@@ -38,9 +38,23 @@ export function useApi() {
     return `${API_BASE}/images/${imageId}/file`
   }
 
+  // Upload a new image
+  async function uploadImage(file: File): Promise<Image> {
+    const formData = new FormData()
+    formData.append('file', file)
+    
+    const response = await fetch(`${API_BASE}/images/upload`, {
+      method: 'POST',
+      body: formData
+    })
+    if (!response.ok) throw new Error('Failed to upload image')
+    return response.json()
+  }
+
   return {
     getPresets,
     getRandomImages,
-    getImageUrl
+    getImageUrl,
+    uploadImage
   }
 }
